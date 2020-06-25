@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <button onclick="location.href='/upload/'" type="button">Upload</button>
+    <button onclick="location.href='/view/'" type="button">View</button>
+    <span class="image main">
+        <img src="{% static 'image/Banner.jpeg' %}" alt=""></img>
+    </span>
+{% endblock content %}

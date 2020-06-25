@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <script>
+        function myfunction(test) {
+            var elems = document.getElementsByClassName(test);
+            for (var i = 0; i < elems.length; i++) {
+                if (getComputedStyle(elems[i]).visibility == 'visible') {
+                    elems[i].style.visibility = 'hidden';
+                }
+                else if (getComputedStyle(elems[i]).visibility == 'hidden') {
+                    elems[i].style.visibility = 'visible';
+                }
+            }
+        }
+    </script>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <select name="selection_id">
+            {% for t in selection %}
+                <option value="{{t.id}}" >{{t.title}}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Show</button>
+    </form>
+    <table>
+        <tr>
+            {% for key, value in title.items %}
+                {% for title in value %}
+                    <th class ="column{{forloop.counter}}">
+                        <input type="button" value="column{{forloop.counter}}" onclick="myfunction(this.value)">
+                        <br>
+                        {{title}}
+                    </th>
+                {% endfor %}
+            {% endfor %}
+        </tr>
+        {% csrf_token %}
+        {% for key, value in data.items %}
+                <tr>
+                    {% for test in value %}
+                    <td class ="column{{forloop.counter}}">
+                        <form  id="myform" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="hidden" name="rownumber" value="{{key}}" />
+                            <input type="hidden" name="value" value="{{test}}" />
+                            <input type="text" name="newword" placeholder="{{test}}">
+                        </form>
+                    </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+    </table>
+{% endblock content %}
