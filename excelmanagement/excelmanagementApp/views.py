@@ -1,5 +1,6 @@
-import json
+import json, csv, os
 import pandas as pd
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.views import View
 from django.views.generic.edit import FormView
@@ -8,6 +9,8 @@ from .models import ExcelData
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib import auth
+
+from django.conf import settings
 
 
 class HomeView (View):
@@ -70,7 +73,7 @@ class ViewView(View):
 
         try:
             if request.POST["selection_id"]:
-                test = ExcelData.objects.get(pk=request.POST["selection_id"])
+                ExcelData.objects.get(pk=request.POST["selection_id"])
                 objects = json.loads(ExcelData.objects.get(pk=request.POST["selection_id"]).data)
                 request.session['last_selection_id'] = request.POST["selection_id"]
 
@@ -101,6 +104,28 @@ class ViewView(View):
         objects["selection"] = self.selection
 
         return render(request, self.template_name, objects)
+
+class ExportCSVView(View):
+    template_name = 'excelmanagement/view.html'
+
+    def get(self, request):
+        objects = json.loads(ExcelData.objects.get(pk=request.session['last_selection_id']).data)
+        file_path = "{}.csv".format(request.user)
+        with open(file_path, "w", newline='') as csvfile:
+            csvwriter = csv.writer(csvfile, delimiter=";")
+            for key, values in objects.items():
+                allkeys = key.split(";")
+                csvwriter.writerow(allkeys)
+                for key, value in values.items():
+                    value = value.split(";")
+                    csvwriter.writerow(value)
+
+        if os.path.exists(file_path):
+            with open(file_path, 'rb') as fh:
+                response = HttpResponse(fh.read(), content_type="application/vnd.ms-excel")
+                response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+                return response
+
 
 
 class LoginView(View):

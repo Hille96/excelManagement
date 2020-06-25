@@ -23,6 +23,9 @@
         </select>
         <button type="submit">Show</button>
     </form>
+    {% if request.POST %}
+    <button onclick="location.href='/download/'" type="button">Download</button>
+    {% endif %}
     <table>
         <tr>
             {% for key, value in title.items %}
