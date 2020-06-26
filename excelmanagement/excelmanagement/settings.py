@@ -25,7 +25,7 @@ SECRET_KEY = '3q6)to0cf2o_kox)p7j5qoe_d*0y#cxqt_0o6^6xa&l^*j2y)t'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["192.168.0.1", "excelmanagement.azurewebsites.net"]
 
 
 LOGIN_REDIRECT_URL = '/'
