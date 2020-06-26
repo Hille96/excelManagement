@@ -84,7 +84,7 @@ DATABASES = {
         'NAME': 'HilbertStehrEwers@excelmanagement-sql',
         'USER': 'postgres',
         'PASSWORD': 'y9PFZbtGdc7xtWCzAFJA',
-        'HOST': 'localhost',
+        'HOST': 'excelmanagement-sql.postgres.database.azure.com',
         'PORT': '5432',
         'TEST': {
             'MIRROR': 'default',
