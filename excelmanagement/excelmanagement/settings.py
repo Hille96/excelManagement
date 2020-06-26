@@ -81,8 +81,8 @@ WSGI_APPLICATION = 'excelmanagement.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'HilbertStehrEwers',
-        'USER': 'postgres',
+        'NAME': 'excelmanagement-sql.postgres.database.azure.com',
+        'USER': 'HilbertStehrEwers@excelmanagement-sql',
         'PASSWORD': 'y9PFZbtGdc7xtWCzAFJA',
         'HOST': 'excelmanagement-sql.postgres.database.azure.com',
         'PORT': '5432',
