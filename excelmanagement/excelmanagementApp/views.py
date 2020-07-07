@@ -4,13 +4,10 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.views import View
 from django.views.generic.edit import FormView
-
 from .models import ExcelData
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib import auth
-
-from django.conf import settings
 
 
 class HomeView (View):
@@ -31,18 +28,14 @@ class UploadFileView(FormView):
     @method_decorator(login_required(login_url="/login/"))
     def post(self, request, *args, **kwargs):
         file = request.FILES['myfile']
-
-        if file.name.endswith('.xlsx'):
-            self._handle_xlsx(file)
-        elif file.name.endswith('.csv'):
-            self._handle_csv(file)
+        if ExcelData.objects.filter(title = request.FILES['myfile']):
+            if file.name.endswith('.csv'):
+                self._update_csv(file, request)
+        else:
+            if file.name.endswith('.csv'):
+                self._handle_csv(file)
         return render(request, self.template_name)
 
-    def _handle_xlsx(self, file):
-        ExcelData.objects.create(
-            title=file.name,
-            data=pd.read_excel(file).to_json(),
-        )
 
     def _handle_csv(self, file):
         data = pd.read_csv(file, error_bad_lines=False).to_json()
@@ -50,6 +43,11 @@ class UploadFileView(FormView):
             title=file.name,
             data = data
         )
+
+    def _update_csv(self, file, request):
+        data = pd.read_csv(file, error_bad_lines=False).to_json()
+        ExcelData.objects.filter(title=request.FILES['myfile']).data = data
+
 
         
 class FilterView(View):
@@ -129,13 +127,16 @@ class ExportCSVView(View):
 
 
 class LoginView(View):
-     template_login = 'excelmanagement/login.html'
-     template_home = 'excelmanagement/home.html'
+    template_login = 'excelmanagement/login.html'
+    template_home = 'excelmanagement/home.html'
 
-     def get(self, request):
-         return render(request, self.template_login)
+    def get(self, request):
+        if request.user.is_authenticated:
+            return render(request, self.template_home)
+        else:
+            return render(request, self.template_login)
 
-     def post(self, request):
+    def post(self, request):
          username = request.POST.get('username', '')
          password = request.POST.get('password', '')
          user = auth.authenticate(username=username, password=password)
